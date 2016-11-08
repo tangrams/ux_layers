@@ -1,0 +1,54 @@
+{
+  "name": "ux_layers",
+  "version": "0.0.1",
+  "description": "Explore and hide/show different layers on Tangram",
+  "main": "ux_layers.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "jshint *.js src/ || true; jscs *.js src/ || true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tangrams/ux_layers.git"
+  },
+  "keywords": [
+    "glsl",
+    "shader",
+    "light",
+    "atmosphere",
+    "scattering"
+  ],
+  "author": {
+    "name": "Mapzen",
+    "url": "https://www.mapzen.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tangrams/ux_layers/issues"
+  },
+  "homepage": "https://github.com/tangrams/ux_layers/#readme",
+  "devDependencies": {
+    "babelify": "^6.4.0",
+    "browserify": "^11.2.0",
+    "browserify-shim": "^3.8.11",
+    "gulp": "^3.9.0",
+    "gulp-derequire": "^2.1.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-plumber": "^1.0.1",
+    "gulp-uglify": "^1.4.2",
+    "gulp-util": "^3.0.7",
+    "jscs": "^2.4.0",
+    "jshint": "^2.8.0",
+    "modernizr": "^3.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "anytime": "^1.4.2",
+    "babel": "^5.8.29",
+    "babel-runtime": "5.8.29",
+    "inspire-tree": "^1.10.4",
+    "xhr": "^2.2.0"
+  },
+  "browserify-shim": {}
+}

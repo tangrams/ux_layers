@@ -36,7 +36,7 @@
     </head>
     <body>
         <div id="map"></div>
-
+    </body>
         <!-- Demo module -->
         <script type="text/javascript">
             var map = (function () {
@@ -60,7 +60,7 @@
                     trackResize: true,
                     keyboard: false
                 });
-                
+
                 var layer = Tangram.leafletLayer({
                     scene: 'https://tangrams.github.io/tangram-sandbox/styles/callejas.yaml',
                     introspection: true,
@@ -88,7 +88,7 @@
                     // Adding Tangram Layer to map
                     layer.addTo(map);
 
-                    // Adding DayLight Control
+                    // Add layer explorer
                     map.addControl(L.uxLayers({ scene: scene }));
                 });
 
@@ -106,5 +106,5 @@
         <script>
           MPZN.bug();
         </script>
-    </body>
+    
 </html>

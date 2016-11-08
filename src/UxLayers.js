@@ -1,3 +1,5 @@
+import InspireTree from 'inspire-tree';
+
 L.UxLayers = L.Control.extend({
     options: {
         position: 'topleft',
@@ -14,6 +16,7 @@ L.UxLayers = L.Control.extend({
         // -------------------------------------------------------------
         var icon_size = 26;
         var size = 260;
+        var state_open = false;
         
         // CONTAINER
         // -------------------------------------------------------------
@@ -34,14 +37,26 @@ L.UxLayers = L.Control.extend({
             if (state_open) {
                 container.style.width = icon_size+'px';
                 container.style.height = icon_size+'px';
-                icon_sc.style.visibility = 'hidden';
             } else {
-                container.style.width = (size+20)+'px';
-                container.style.height = (size+20+toolbar_size)+'px';
-                icon_sc.style.visibility = 'visible';
+                container.style.width = (size)+'px';
+                container.style.height = (size)+'px';
             }
             state_open = !state_open;
         });
+
+        var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', container);
+        var tree = new InspireTree({
+            target: '.ux_layers',
+            data: {}
+        });
+
+        scene.subscribe({
+            load: function (e) {
+                console.log('scene loaded:', e);
+                // tree.load(scene.config.layers);
+            }
+        });
+        return container;
     },
 
     onRemove: function (map) {
@@ -49,4 +64,4 @@ L.UxLayers = L.Control.extend({
     }
 });
 
-L.uxLayers= function(options) { return new L.UxLayers(options); };
+L.uxLayers = function(options) { return new L.UxLayers(options); };

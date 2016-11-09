@@ -1,4 +1,5 @@
 import InspireTree from 'inspire-tree';
+import TreeNode from 'inspire-tree';
 
 L.UxLayers = L.Control.extend({
     options: {
@@ -45,15 +46,26 @@ L.UxLayers = L.Control.extend({
         });
 
         var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', container);
-        var tree = new InspireTree({
-            target: '.ux_layers',
-            data: {}
-        });
-
+        var tree_data = [];
         scene.subscribe({
             load: function (e) {
-                console.log('scene loaded:', e);
-                // tree.load(scene.config.layers);
+                tree_data = [];
+                for (let layer in  e.config.layers) {
+                    tree_data.push({"text":layer})
+                }
+                var tree = new InspireTree({
+                    target: tree_dom,
+                    selection: {
+                        mode: 'checkbox'
+                    },
+                    data: tree_data
+                });
+                window.tree = tree;
+                tree.on('node.click', (evt, node) => {
+                    // node clicked!
+                    console.log(['node clicked', evt, node]);
+                });
+                // console.log("scene:",Object.keys(e.config.layers))
             }
         });
         return container;

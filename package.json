@@ -4,19 +4,28 @@
   "description": "Explore and hide/show different layers on Tangram",
   "main": "ux_layers.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "jshint *.js src/ || true; jscs *.js src/ || true"
+    "start": "npm run watch",
+    "test": "npm run lint && npm run build-test && npm run test-local",
+    "test-ci": "npm run lint && npm run build-test && npm run test-remote",
+    "lint": "$(npm bin)/jshint src/ && jshint test/",
+    "build": "npm run build-bundle -- -o ux_layers.js && npm run build-minify",
+    "build-test": "npm run build-bundle -- -o ux_layers.test.js",
+    "build-debug": "npm run build-bundle -- -o ux_layers.debug.js",
+    "build-bundle": "$(npm bin)/browserify src/uxLayers.js -t [ babelify --presets [ es2015 ] ] -t brfs -s ux_layers -p browserify-derequire --debug",
+    "build-minify": "$(npm bin)/uglifyjs ux_layers.js -c warnings=false -m -o ux_layers.min.js && npm run build-size",
+    "build-size": "gzip ux_layers.min.js -c | wc -c | awk '{kb=$1/1024; print kb}' OFMT='%.0fk minified+gzipped'",
+    "watch": "$(npm bin)/budo src/uxLayers.js:ux_layers.js --port 8000 --cors --live -- -t [ babelify --presets [ es2015 ] ] -t brfs -s ux_layers"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tangrams/ux_layers.git"
   },
   "keywords": [
-    "glsl",
-    "shader",
-    "light",
-    "atmosphere",
-    "scattering"
+    "tangram",
+    "layers",
+    "vector",
+    "tile",
+    "data"
   ],
   "author": {
     "name": "Mapzen",
@@ -28,27 +37,30 @@
   },
   "homepage": "https://github.com/tangrams/ux_layers/#readme",
   "devDependencies": {
-    "babelify": "^6.4.0",
-    "browserify": "^11.2.0",
-    "browserify-shim": "^3.8.11",
-    "gulp": "^3.9.0",
-    "gulp-derequire": "^2.1.0",
-    "gulp-livereload": "^3.8.1",
-    "gulp-plumber": "^1.0.1",
-    "gulp-uglify": "^1.4.2",
-    "gulp-util": "^3.0.7",
-    "jscs": "^2.4.0",
-    "jshint": "^2.8.0",
-    "modernizr": "^3.1.0",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "babelify": "7.3.0",
+    "babel-preset-es2015": "6.16.0",
+    "browserify": "13.0.1",
+    "browserify-derequire": "0.9.4",
+    "budo": "8.2.1",
+    "chai": "1.9.2",
+    "chai-as-promised": "4.1.1",
+    "core-js": "2.4.1",
+    "glob": "4.0.6",
+    "jshint": "jshint/jshint#3a8efa979dbb157bfb5c10b5826603a55a33b9ad",
+    "karma": "0.12.23",
+    "karma-browserify": "5.1.0",
+    "karma-chrome-launcher": "0.1.4",
+    "karma-mocha": "0.1.9",
+    "karma-mocha-reporter": "1.0.0",
+    "karma-sauce-launcher": "tangrams/karma-sauce-launcher#firefox-profiles",
+    "karma-sinon": "1.0.4",
+    "mocha": "1.21.4",
+    "sinon": "1.10.3",
+    "uglify-js": "2.4.14",
+    "yargs": "1.3.2"
   },
   "dependencies": {
-    "anytime": "^1.4.2",
-    "babel": "^5.8.29",
-    "babel-runtime": "5.8.29",
-    "inspire-tree": "^1.10.4",
-    "xhr": "^2.2.0"
-  },
-  "browserify-shim": {}
+    "brfs": "1.4.3",
+    "inspire-tree": "^1.10.4"
+  }
 }

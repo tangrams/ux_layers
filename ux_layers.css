@@ -29,11 +29,15 @@
 
 .inspire-tree {
     background: #fff;
-    border: 1px solid #bbb;
-    border-radius: 2px;
     font: 400 12px Helvetica Nueue, Verdana, sans-serif;
-    margin-bottom: 20px;
-    max-width: 500px;
-    min-height: 400px;
-    min-width: 300px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: -17px;
+    top: 25px;
+}
+
+a.title.icon {
+    width: 100%;
+    text-align: justify;
 }

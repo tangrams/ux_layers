@@ -33,23 +33,57 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    /*left: -17px;*/
     top: 25px;
 }
 
-.inspire-tree .selected .wholerow { background: none; }
+/*.inspire-tree .selected .wholerow { background: none; }*/
 
 a.title.icon {
     width: 100%;
     text-align: left;
-    left: 27px;
+    left: 11px;
+}
+
+.inspire-tree .toggle {
+    left: 0px;
+    position: absolute;
+    top: 0;
+    width: 25px;
+    z-index: 2;
+    border-width: 0px;
+}
+
+.inspire-tree .toggle:hover {
+    border-width: 0px;
+}
+
+.inspire-tree .icon {
+    background-color: rgba(0,0,0,0);
+}
+
+.inspire-tree a:hover {
+    background-color: rgba(0,0,0,0);
+    border-width: 0px;
+}
+
+.inspire-tree .wholerow:hover {
+    border-width: 0px;
+}
+
+.title-wrap:hover {
+
+}
+
+.ispire-tree li:hover {
+    border-width: 0px;
 }
 
 .inspire-tree .icon:before {
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    content: '';
-    display: inline-block;
-    height: 0px;
-    width: 0px;
+    /*background-position: 0 0;*/
+    /*background-repeat: no-repeat;*/
+    border-width: 0px;
+    /*content: '';*/
+    /*display: inline-block;*/
+    /*height: 0px;*/
+    /*width: 0px;*/
 }

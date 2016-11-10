@@ -34,17 +34,6 @@ L.UxLayers = L.Control.extend({
         // -------------------------------------------------------------
         var icon =  L.DomUtil.create('img', 'ux_layers-icon', container);
         icon.src = this.options.icon;
-        icon.addEventListener('click', function(){
-            if (state_open) {
-                container.style.width = icon_size+'px';
-                container.style.height = icon_size+'px';
-            } else {
-                container.style.width = (size)+'px';
-                container.style.height = (size)+'px';
-            }
-            state_open = !state_open;
-        });
-
         var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', container);
         var tree_data = [];
 
@@ -52,10 +41,10 @@ L.UxLayers = L.Control.extend({
             tree_data = [];
             for (let layer_name in layers) {
                 let layer = layers[layer_name];
-                let node = {text:layer_name, children:[], address:'layers:'+layer_name, visible:((layers.visible === undefined)? true : layers.visible) }
+                let node = {text:layer_name, children:[], address:'layers:'+layer_name, visible:((layers.visible === undefined)? true : layers.visible), itree: { state: { selected: true } } }
                 for (let sublayer_name in layer.draw) {
                     let sublayer = layer.draw[sublayer_name];
-                    node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible)})
+                    node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible), itree: { state: { selected: true } } })
                 }
                 tree_data.push(node);
             }
@@ -74,6 +63,32 @@ L.UxLayers = L.Control.extend({
                 layer.visible = !node.selected();
                 scene.rebuild();
                 console.log(node);
+                if (state_open) {
+                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
+                }
+            });
+
+            tree.on('node.collapsed', (evt, node) => {
+                if (state_open) {
+                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
+                }
+            });
+
+            tree.on('node.expanded', (evt, node) => {
+                if (state_open) {
+                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
+                }
+            });
+
+            icon.addEventListener('click', function(){
+                if (state_open) {
+                    container.style.width = icon_size+'px';
+                    container.style.height = icon_size+'px';
+                } else {
+                    container.style.width = size+'px';
+                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
+                }
+                state_open = !state_open;
             });
         }
 

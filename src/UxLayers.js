@@ -37,17 +37,47 @@ L.UxLayers = L.Control.extend({
         var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', container);
         var tree_data = [];
 
-        function makeTree(layers) {
-            tree_data = [];
+        function isThereOn (element, list) {
+            return list.indexOf(element) > -1;
+        };
+
+        function addNodes (layers, address, data, last_iter = false) {
+            let skip_list = ['data', 'filter','style','font','order'];
+
+            console.log(layers, address, data, last_iter);
+
             for (let layer_name in layers) {
                 let layer = layers[layer_name];
-                let node = {text:layer_name, children:[], address:'layers:'+layer_name, visible:((layers.visible === undefined)? true : layers.visible), itree: { state: { selected: true } } }
-                for (let sublayer_name in layer.draw) {
-                    let sublayer = layer.draw[sublayer_name];
-                    node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible), itree: { state: { selected: true } } })
+                if (isThereOn(layer_name,skip_list)) {
+                    continue;
                 }
-                tree_data.push(node);
+                else if (layer_name === "draw") {
+                    addNodes(layer, address+':'+layer_name, data, true);
+                } else {
+                    let node = {text:layer_name, children:[], address:address+':'+layer_name, visible:((layer.visible === undefined)? true : layer.visible), itree: { state: { selected: true } } }
+                    if (!last_iter) {
+                        addNodes(layer, address+':'+layer_name, node.children);
+                    }
+                    data.push(node);
+                }
+                
             }
+
+        }
+        function makeTree(layers) {
+            tree_data = [];
+            addNodes(layers, "layers", tree_data);
+            // for (let layer_name in layers) {
+            //     let layer = layers[layer_name];
+            //     let address = 'layers:'+layer;
+            //     let node = {text:layer_name, children:[], address:address, visible:((layers.visible === undefined)? true : layers.visible), itree: { state: { selected: true } } }
+                
+            //     for (let sublayer_name in layer.draw) {
+            //         let sublayer = layer.draw[sublayer_name];
+            //         node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible), itree: { state: { selected: true } } })
+            //     }
+            //     tree_data.push(node);
+            // }
 
             var tree = new InspireTree({
                 target: tree_dom,
@@ -60,24 +90,18 @@ L.UxLayers = L.Control.extend({
             window.tree = tree;
             tree.on('node.click', (evt, node) => {
                 let layer = getAddressSceneContent(scene,node.address);
+                console.log(node.address,node,layer);
                 layer.visible = !node.selected();
                 scene.rebuild();
-                console.log(node);
-                if (state_open) {
-                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
-                }
+                container.style.height = tree.dom.$target.scrollHeight+'px';
             });
 
             tree.on('node.collapsed', (evt, node) => {
-                if (state_open) {
-                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
-                }
+                container.style.height = tree.dom.$target.scrollHeight+'px';
             });
 
             tree.on('node.expanded', (evt, node) => {
-                if (state_open) {
-                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
-                }
+                container.style.height = tree.dom.$target.scrollHeight+'px';
             });
 
             icon.addEventListener('click', function(){

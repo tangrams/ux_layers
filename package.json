@@ -10,7 +10,7 @@
     "lint": "$(npm bin)/jshint src/ && jshint test/",
     "build": "npm run build-bundle -- -o ux_layers.js && npm run build-minify",
     "build-test": "npm run build-bundle -- -o ux_layers.test.js",
-    "build-debug": "npm run build-bundle -- -o ux_layers.debug.js",
+    "build-debug": "npm run build-bundle -- -o ux_layers.js",
     "build-bundle": "$(npm bin)/browserify src/uxLayers.js -t [ babelify --presets [ es2015 ] ] -s ux_layers -p browserify-derequire --debug",
     "build-minify": "$(npm bin)/uglifyjs ux_layers.js -c warnings=false -m -o ux_layers.min.js && npm run build-size",
     "build-size": "gzip ux_layers.min.js -c | wc -c | awk '{kb=$1/1024; print kb}' OFMT='%.0fk minified+gzipped'",

@@ -73,6 +73,7 @@ L.UxLayers = L.Control.extend({
                 let layer = getAddressSceneContent(scene,node.address);
                 layer.visible = !node.selected();
                 scene.rebuild();
+                console.log(node);
             });
         }
 

@@ -1,4 +1,5 @@
 import InspireTree from 'inspire-tree';
+import { getAddressSceneContent } from './tangram';
 
 L.UxLayers = L.Control.extend({
     options: {
@@ -49,9 +50,16 @@ L.UxLayers = L.Control.extend({
 
         function makeTree(layers) {
             tree_data = [];
-            for (let layer in layers) {
-                tree_data.push({"text":layer})
+            for (let layer_name in layers) {
+                let layer = layers[layer_name];
+                let node = {text:layer_name, children:[], address:'layers:'+layer_name, visible:((layers.visible === undefined)? true : layers.visible) }
+                for (let sublayer_name in layer.draw) {
+                    let sublayer = layer.draw[sublayer_name];
+                    node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible)})
+                }
+                tree_data.push(node);
             }
+
             var tree = new InspireTree({
                 target: tree_dom,
                 selection: {
@@ -59,10 +67,12 @@ L.UxLayers = L.Control.extend({
                 },
                 data: tree_data
             });
+
             window.tree = tree;
             tree.on('node.click', (evt, node) => {
-                // node clicked!
-                console.log(['node clicked', evt, node]);
+                let layer = getAddressSceneContent(scene,node.address);
+                layer.visible = !node.selected();
+                scene.rebuild();
             });
         }
 
@@ -70,7 +80,6 @@ L.UxLayers = L.Control.extend({
             load: function (e) {
                 if (tree_data.length === 0.) {
                     makeTree(e.config.layers);
-                    // console.log("scene:",Object.keys(e.config.layers))
                 }
             }
         });

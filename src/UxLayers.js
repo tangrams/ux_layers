@@ -34,7 +34,11 @@ L.UxLayers = L.Control.extend({
         // -------------------------------------------------------------
         var icon =  L.DomUtil.create('img', 'ux_layers-icon', container);
         icon.src = this.options.icon;
-        var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', container);
+        var input_dom =  L.DomUtil.create('input', 'ux_layers-search', container);
+        input_dom.setAttribute('type','text');
+        input_dom.setAttribute('placeholder','Search');
+        var tree_container =  L.DomUtil.create('div', 'ux_layers-tree-container', container);
+        var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', tree_container);
         var tree_data = [];
 
         function isThereOn (element, list) {
@@ -43,9 +47,7 @@ L.UxLayers = L.Control.extend({
 
         function addNodes (layers, address, data, last_iter = false) {
             let skip_list = ['data', 'filter','style','font','order'];
-
-            console.log(layers, address, data, last_iter);
-
+            //console.log(layers, address, data, last_iter);
             for (let layer_name in layers) {
                 let layer = layers[layer_name];
                 if (isThereOn(layer_name,skip_list)) {
@@ -54,7 +56,8 @@ L.UxLayers = L.Control.extend({
                 else if (layer_name === "draw") {
                     addNodes(layer, address+':'+layer_name, data, true);
                 } else {
-                    let node = {text:layer_name, children:[], address:address+':'+layer_name, visible:((layer.visible === undefined)? true : layer.visible), itree: { state: { selected: true } } }
+                    let visible = ((layer.visible === undefined)? true : layer.visible);
+                    let node = {text:layer_name, children:[], address:address+':'+layer_name, visible:visible, itree: { state: { selected: visible } } }
                     if (!last_iter) {
                         addNodes(layer, address+':'+layer_name, node.children);
                     }
@@ -67,17 +70,6 @@ L.UxLayers = L.Control.extend({
         function makeTree(layers) {
             tree_data = [];
             addNodes(layers, "layers", tree_data);
-            // for (let layer_name in layers) {
-            //     let layer = layers[layer_name];
-            //     let address = 'layers:'+layer;
-            //     let node = {text:layer_name, children:[], address:address, visible:((layers.visible === undefined)? true : layers.visible), itree: { state: { selected: true } } }
-                
-            //     for (let sublayer_name in layer.draw) {
-            //         let sublayer = layer.draw[sublayer_name];
-            //         node.children.push({text:sublayer_name, address:'layers:'+layer_name+':draw:'+sublayer_name, visible:((sublayer.visible === undefined)? true : sublayer.visible), itree: { state: { selected: true } } })
-            //     }
-            //     tree_data.push(node);
-            // }
 
             var tree = new InspireTree({
                 target: tree_dom,
@@ -87,21 +79,36 @@ L.UxLayers = L.Control.extend({
                 data: tree_data
             });
 
+            function resize_container() {
+                if (state_open) {
+                    container.style.width = Math.max(tree.dom.$target.offsetWidth,size)+'px';
+                    container.style.height = (tree.dom.$target.offsetHeight+25)+'px';
+                }
+            }
+
+            container.addEventListener('click', function(){
+                resize_container();
+            });
+
+            input_dom.addEventListener('keyup', function(event) {
+                tree.search(event.target.value);
+                resize_container();
+            });
+
             window.tree = tree;
             tree.on('node.click', (evt, node) => {
                 let layer = getAddressSceneContent(scene,node.address);
                 console.log(node.address,node,layer);
                 layer.visible = !node.selected();
                 scene.rebuild();
-                container.style.height = tree.dom.$target.scrollHeight+'px';
             });
 
             tree.on('node.collapsed', (evt, node) => {
-                container.style.height = tree.dom.$target.scrollHeight+'px';
+                resize_container();
             });
 
             tree.on('node.expanded', (evt, node) => {
-                container.style.height = tree.dom.$target.scrollHeight+'px';
+                resize_container();
             });
 
             icon.addEventListener('click', function(){

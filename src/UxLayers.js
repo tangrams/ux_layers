@@ -5,6 +5,7 @@ L.UxLayers = L.Control.extend({
     options: {
         position: 'topleft',
         icon: 'https://tangrams.github.io/ux_layers/ux_layers.png',
+        icon_picker: 'https://tangrams.github.io/ux_layers/ux_picker.png',
         scene: null
     },
 
@@ -34,6 +35,8 @@ L.UxLayers = L.Control.extend({
         // -------------------------------------------------------------
         var icon =  L.DomUtil.create('img', 'ux_layers-icon', container);
         icon.src = this.options.icon;
+        var picker_icon =  L.DomUtil.create('img', 'ux_layers-picker-icon', container);
+        icon.picker_icon = this.options.icon_picker;
         var input_dom =  L.DomUtil.create('input', 'ux_layers-search', container);
         input_dom.setAttribute('type','text');
         input_dom.setAttribute('placeholder','Search');

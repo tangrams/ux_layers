@@ -1,4 +1,5 @@
 import InspireTree from 'inspire-tree';
+import TreeNodes from 'inspire-tree';
 import { getAddressSceneContent } from './tangram';
 
 L.UxLayers = L.Control.extend({
@@ -6,7 +7,8 @@ L.UxLayers = L.Control.extend({
         position: 'topleft',
         icon: 'https://tangrams.github.io/ux_layers/ux_layers.png',
         icon_picker: 'https://tangrams.github.io/ux_layers/ux_picker.png',
-        scene: null
+        scene: null,
+        layer: null
     },
 
     initialize: function(options) {
@@ -19,6 +21,8 @@ L.UxLayers = L.Control.extend({
         var icon_size = 26;
         var size = 260;
         var state_open = false;
+        var scene = this.options.scene;
+        var tangram = this.options.layer;
         
         // CONTAINER
         // -------------------------------------------------------------
@@ -33,13 +37,22 @@ L.UxLayers = L.Control.extend({
 
         // ICON
         // -------------------------------------------------------------
-        var icon =  L.DomUtil.create('img', 'ux_layers-icon', container);
+        var toolbar_dom =  L.DomUtil.create('div', 'ux_layers-toolbar', container);
+
+        var icon =  L.DomUtil.create('img', 'ux_layers-icon', toolbar_dom);
         icon.src = this.options.icon;
-        var picker_icon =  L.DomUtil.create('img', 'ux_layers-picker-icon', container);
-        icon.picker_icon = this.options.icon_picker;
-        var input_dom =  L.DomUtil.create('input', 'ux_layers-search', container);
+
+        var input_dom =  L.DomUtil.create('input', 'ux_layers-search', toolbar_dom);
         input_dom.setAttribute('type','text');
         input_dom.setAttribute('placeholder','Search');
+
+
+        var picker_icon = undefined;
+        if (tangram) {
+            picker_icon = L.DomUtil.create('img', 'ux_layers-picker-icon', toolbar_dom);
+            picker_icon.src = this.options.icon_picker;
+        }
+
         var tree_container =  L.DomUtil.create('div', 'ux_layers-tree-container', container);
         var tree_dom =  L.DomUtil.create('div', 'ux_layers-tree', tree_container);
         var tree_data = [];
@@ -84,8 +97,8 @@ L.UxLayers = L.Control.extend({
 
             function resize_container() {
                 if (state_open) {
-                    container.style.width = Math.max(tree.dom.$target.offsetWidth,size)+'px';
-                    container.style.height = (tree.dom.$target.offsetHeight+25)+'px';
+                    container.style.width = (Math.max(tree.dom.$target.offsetWidth,size))+'px';
+                    container.style.height = (tree.dom.$target.offsetHeight+26)+'px';
                 }
             }
 
@@ -98,7 +111,6 @@ L.UxLayers = L.Control.extend({
                 resize_container();
             });
 
-            window.tree = tree;
             tree.on('node.click', (evt, node) => {
                 let layer = getAddressSceneContent(scene,node.address);
                 console.log(node.address,node,layer);
@@ -113,17 +125,60 @@ L.UxLayers = L.Control.extend({
             tree.on('node.expanded', (evt, node) => {
                 resize_container();
             });
+            window.tree = tree
 
-            icon.addEventListener('click', function(){
+            icon.addEventListener('click', function() {
                 if (state_open) {
                     container.style.width = icon_size+'px';
                     container.style.height = icon_size+'px';
                 } else {
-                    container.style.width = size+'px';
-                    container.style.height = (tree.dom.$target.scrollHeight+25)+'px';
+                    resize_container();
                 }
                 state_open = !state_open;
             });
+
+            if (tangram && picker_icon) {
+                picker_icon.addEventListener('click', function() {
+                    tree.showDeep();
+                    tree.collapse();
+                    console.log('Instrospection ON');
+                    scene.canvas.style.cursor = "crosshair";
+                    scene.setIntrospection(true);
+                    tangram.setSelectionEvents({
+                        //hover: function(selection) { console.log('Hover!', selection); },
+                        click: function (selection) { 
+                            if (selection.feature) {
+                                console.log('Click!', selection);
+                                
+                                tree.dom.batch();
+                                tree.model.recurseDown(function(node) {
+                                    if (!node.removed()) {
+                                        var match = new RegExp("layers:"+selection.feature.layers[0], 'i').test(node.address);
+                                        var wasHidden = node.hidden();
+                                        // node.state('hidden', !match);
+
+                                        // If hidden state will change
+                                        if (wasHidden !== node.hidden()) {
+                                            node.markDirty();
+                                        }
+
+                                        if (match) {
+                                            node.expandParents();
+                                        } else {
+                                            node.collapse();
+                                        }
+                                    }
+                                });
+                                tree.dom.end();
+                                resize_container();
+                            }
+                            scene.setIntrospection(false);
+                            scene.canvas.style.cursor = "auto";
+                            console.log('Instrospection OFF');
+                        }
+                    });
+                })
+            }
         }
 
         scene.subscribe({

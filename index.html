@@ -90,7 +90,7 @@
                     layer.addTo(map);
 
                     // Add layer explorer
-                    map.addControl(L.uxLayers({ scene: scene }));
+                    map.addControl(L.uxLayers({ scene: scene, layer: layer }));
                 });
 
                 return map;

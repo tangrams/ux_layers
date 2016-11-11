@@ -99,6 +99,9 @@ L.UxLayers = L.Control.extend({
                 if (state_open) {
                     container.style.width = (Math.max(tree.dom.$target.offsetWidth,size))+'px';
                     container.style.height = (tree.dom.$target.offsetHeight+26)+'px';
+                } else {
+                    container.style.width = icon_size+'px';
+                    container.style.height = icon_size+'px';
                 }
             }
 
@@ -128,13 +131,8 @@ L.UxLayers = L.Control.extend({
             window.tree = tree
 
             icon.addEventListener('click', function() {
-                if (state_open) {
-                    container.style.width = icon_size+'px';
-                    container.style.height = icon_size+'px';
-                } else {
-                    resize_container();
-                }
                 state_open = !state_open;
+                resize_container();
             });
 
             if (tangram && picker_icon) {
@@ -155,7 +153,7 @@ L.UxLayers = L.Control.extend({
                                     if (!node.removed()) {
                                         var match = new RegExp("layers:"+selection.feature.layers[0], 'i').test(node.address);
                                         var wasHidden = node.hidden();
-                                        // node.state('hidden', !match);
+                                        node.state('hidden', !match);
 
                                         // If hidden state will change
                                         if (wasHidden !== node.hidden()) {
@@ -177,8 +175,10 @@ L.UxLayers = L.Control.extend({
                             console.log('Instrospection OFF');
                         }
                     });
-                })
+                });
             }
+
+            resize_container();
         }
 
         scene.subscribe({

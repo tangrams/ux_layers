@@ -30,7 +30,7 @@
 }
 
 .ux_layers-search {
-    width: calc(100% - 20px);
+    width: calc(100% - 60px);
     border-width: 0px;
     position: absolute;
     top: 6px;

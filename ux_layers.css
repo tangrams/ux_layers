@@ -22,15 +22,24 @@
     padding: 3px;
     width: 20px;
     height: 20px;
-    z-index: 101;
+    top: 0px;
+    left: 0px;
+    background-color: white;
+    position: absolute;
+    z-index: 102;
 }
 
 .ux_layers-search {
-    width: calc(100% - 20px);;
+    width: calc(100% - 20px);
     border-width: 0px;
+    position: absolute;
+    top: 6px;
+    left: 29px;
 }
 
 .ux_layers-picker-icon {
+    position: absolute;
+    right: 0px;
     width: 15px;
     height: 15px;
     z-index: 100;

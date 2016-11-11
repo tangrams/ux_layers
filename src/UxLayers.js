@@ -37,19 +37,19 @@ L.UxLayers = L.Control.extend({
 
         // ICON
         // -------------------------------------------------------------
-        var toolbar_dom =  L.DomUtil.create('div', 'ux_layers-toolbar', container);
+        // var toolbar_dom =  L.DomUtil.create('div', 'ux_layers-toolbar', container);
 
-        var icon =  L.DomUtil.create('img', 'ux_layers-icon', toolbar_dom);
+        var icon =  L.DomUtil.create('img', 'ux_layers-icon', container);
         icon.src = this.options.icon;
 
-        var input_dom =  L.DomUtil.create('input', 'ux_layers-search', toolbar_dom);
+        var input_dom =  L.DomUtil.create('input', 'ux_layers-search', container);
         input_dom.setAttribute('type','text');
         input_dom.setAttribute('placeholder','Search');
 
 
         var picker_icon = undefined;
         if (tangram) {
-            picker_icon = L.DomUtil.create('img', 'ux_layers-picker-icon', toolbar_dom);
+            picker_icon = L.DomUtil.create('img', 'ux_layers-picker-icon', container);
             picker_icon.src = this.options.icon_picker;
         }
 

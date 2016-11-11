@@ -27,11 +27,12 @@ L.UxLayers = L.Control.extend({
         // CONTAINER
         // -------------------------------------------------------------
         var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom ux_layers-container');
-        container.addEventListener('mousedown', function(){
+        container.addEventListener('mousedown', function(e) {
             map.dragging.disable();
+            e.stopPropagation();
         });
 
-        container.addEventListener('mouseup', function(){
+        container.addEventListener('mouseup', function(e) {
             map.dragging.enable();
         });
 
@@ -114,11 +115,12 @@ L.UxLayers = L.Control.extend({
                 resize_container();
             });
 
-            tree.on('node.click', (evt, node) => {
+            tree.on('node.click', (event, node) => {
                 let layer = getAddressSceneContent(scene,node.address);
                 console.log(node.address,node,layer);
                 layer.visible = !node.selected();
                 scene.rebuild();
+                event.stopPropagation();
             });
 
             tree.on('node.collapsed', (evt, node) => {
@@ -128,17 +130,18 @@ L.UxLayers = L.Control.extend({
             tree.on('node.expanded', (evt, node) => {
                 resize_container();
             });
-            window.tree = tree
 
-            icon.addEventListener('click', function() {
+            icon.addEventListener('click', function(event) {
                 state_open = !state_open;
                 resize_container();
+                event.stopPropagation();
             });
 
             if (tangram && picker_icon) {
-                picker_icon.addEventListener('click', function() {
+                picker_icon.addEventListener('click', function(event) {
                     tree.showDeep();
                     tree.collapse();
+                    picker_icon.style.backgroundColor = "red";
                     console.log('Instrospection ON');
                     scene.canvas.style.cursor = "crosshair";
                     scene.setIntrospection(true);
@@ -147,7 +150,7 @@ L.UxLayers = L.Control.extend({
                         click: function (selection) { 
                             if (selection.feature) {
                                 console.log('Click!', selection);
-                                
+
                                 tree.dom.batch();
                                 tree.model.recurseDown(function(node) {
                                     if (!node.removed()) {
@@ -171,10 +174,12 @@ L.UxLayers = L.Control.extend({
                                 resize_container();
                             }
                             scene.setIntrospection(false);
+                            picker_icon.style.backgroundColor = "white";
                             scene.canvas.style.cursor = "auto";
                             console.log('Instrospection OFF');
                         }
                     });
+                    event.stopPropagation();
                 });
             }
 
